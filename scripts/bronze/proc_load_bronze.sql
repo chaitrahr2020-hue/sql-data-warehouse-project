@@ -1,3 +1,6 @@
+/// need to check the inserting of data in bronze table along with logs....in office pc its not allowed...
+	except that store procedure and error handling are executed successfully
+
 /*
 ===============================================================================
 Stored Procedure: Load Bronze Layer (Source -> Bronze)
@@ -26,12 +29,18 @@ BEGIN
     DECLARE batch_end_time DATETIME;
 
     -- Error Handler
+
+-- Declare variables first
+    DECLARE err_msg TEXT;
+
+-- Declare handler
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
+        GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
+
         SELECT '==========================================' AS msg;
         SELECT 'ERROR OCCURRED DURING LOADING BRONZE LAYER' AS msg;
-        SELECT CONCAT('Error Message: ', MESSAGE_TEXT) 
-        FROM information_schema.innodb_trx LIMIT 1;
+        SELECT CONCAT('Error Message: ', err_msg) AS msg;
         SELECT '==========================================' AS msg;
     END;
 
